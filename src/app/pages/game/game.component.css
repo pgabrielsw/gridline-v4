@@ -1,0 +1,368 @@
+/* === VARIÁVEIS DE CORES === */
+:root {
+  --bg-primary: #1a1d29;
+  --bg-secondary: #242835;
+  --bg-card: #2d3142;
+  --accent-blue: #4d7eff;
+  --accent-cyan: #00d4ff;
+  --text-primary: #ffffff;
+  --text-secondary: #b8bcc8;
+  --border-color: rgba(77, 126, 255, 0.2);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px rgba(77, 126, 255, 0.3);
+}
+
+/* === ANIMAÇÕES === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* === WRAPPER PRINCIPAL === */
+.game-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1d29 0%, #242835 50%, #2d3142 100%);
+  padding: 20px;
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* === HEADER === */
+.game-header {
+  text-align: center;
+  margin-bottom: 40px;
+  animation: slideDown 0.8s ease-out;
+}
+
+.game-header h1 {
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  text-shadow: 0 0 30px rgba(77, 126, 255, 0.5);
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.game-header p {
+  font-size: 16px;
+  color: var(--text-secondary);
+  font-weight: 300;
+}
+
+/* === GRID DE MÉTRICAS === */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.metric-card {
+  background: var(--bg-card);
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  animation: fadeIn 0.6s ease-out backwards;
+}
+
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(77, 126, 255, 0.1), transparent);
+  transition: left 0.6s ease;
+}
+
+.metric-card:hover::before {
+  left: 100%;
+}
+
+.metric-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: var(--accent-blue);
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+}
+
+.metric-card:nth-child(1) { animation-delay: 0.1s; }
+.metric-card:nth-child(2) { animation-delay: 0.2s; }
+.metric-card:nth-child(3) { animation-delay: 0.3s; }
+.metric-card:nth-child(4) { animation-delay: 0.4s; }
+.metric-card:nth-child(5) { animation-delay: 0.5s; }
+.metric-card:nth-child(6) { animation-delay: 0.6s; }
+
+.metric-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.metric-value {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-shadow: 0 2px 10px rgba(77, 126, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.metric-card:hover .metric-value {
+  color: var(--accent-cyan);
+  transform: scale(1.1);
+}
+
+/* === SEÇÃO DO MAPA === */
+.map-section {
+  max-width: 1400px;
+  margin: 0 auto 40px;
+  animation: fadeIn 0.8s ease-out 0.4s backwards;
+}
+
+.map-section h2 {
+  font-size: 28px;
+  text-align: center;
+  margin-bottom: 30px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.map-container {
+  background: var(--bg-card);
+  padding: 40px;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-lg);
+  min-height: 500px;
+  position: relative;
+  overflow: hidden;
+}
+
+.map-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(77, 126, 255, 0.05) 0%, transparent 70%);
+  animation: float 6s ease-in-out infinite;
+}
+
+.pixel-grid {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.pixel {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  animation: fadeIn 0.6s ease-out backwards;
+}
+
+.pixel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.pixel:hover::after {
+  opacity: 1;
+}
+
+.pixel:hover {
+  transform: translateY(-8px) scale(1.15);
+  box-shadow: var(--shadow-lg), 0 0 30px currentColor;
+}
+
+.pixel:nth-child(1) { background: linear-gradient(135deg, #ff6b6b, #ee5a52); animation-delay: 0.1s; }
+.pixel:nth-child(2) { background: linear-gradient(135deg, #ffd93d, #f4c430); animation-delay: 0.2s; }
+.pixel:nth-child(3) { background: linear-gradient(135deg, #6bcf7f, #51b86f); animation-delay: 0.3s; }
+.pixel:nth-child(4) { background: linear-gradient(135deg, #4ecdc4, #3ab7ae); animation-delay: 0.4s; }
+.pixel:nth-child(5) { background: linear-gradient(135deg, #95e1ff, #6dd5fa); animation-delay: 0.5s; }
+.pixel:nth-child(6) { background: linear-gradient(135deg, #a78bfa, #8b5cf6); animation-delay: 0.6s; }
+.pixel:nth-child(7) { background: linear-gradient(135deg, #6dd5fa, #2980b9); animation-delay: 0.7s; }
+
+/* === SEÇÃO DE AÇÕES === */
+.actions-section {
+  max-width: 800px;
+  margin: 0 auto;
+  animation: fadeIn 1s ease-out 0.6s backwards;
+}
+
+.actions-section h2 {
+  font-size: 28px;
+  text-align: center;
+  margin-bottom: 30px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.actions-container {
+  background: var(--bg-card);
+  padding: 40px;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-lg);
+}
+
+.action-button {
+  width: 100%;
+  padding: 18px 32px;
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+  color: var(--text-primary);
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow-md), var(--shadow-glow);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.action-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.action-button:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.action-button:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(77, 126, 255, 0.5);
+}
+
+.action-button:active {
+  transform: translateY(-2px);
+}
+
+/* === RESPONSIVIDADE === */
+@media (max-width: 768px) {
+  .game-header h1 {
+    font-size: 32px;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .metric-value {
+    font-size: 28px;
+  }
+
+  .map-container,
+  .actions-container {
+    padding: 24px;
+  }
+
+  .pixel {
+    width: 50px;
+    height: 50px;
+  }
+
+  .action-button {
+    padding: 14px 24px;
+    font-size: 16px;
+  }
+}
+
+/* === LOADING E ESTADOS === */
+.loading {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(90deg, var(--bg-card) 25%, rgba(77, 126, 255, 0.1) 50%, var(--bg-card) 75%);
+  background-size: 1000px 100%;
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}

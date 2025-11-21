@@ -1,0 +1,1275 @@
+// Variáveis de cores
+$primary-blue: #00b4d8;
+$secondary-blue: #0077b6;
+$dark-blue: #1e3c72;
+$darker-blue: #2a5298;
+$success-green: #28a745;
+$warning-yellow: #ffc107;
+$danger-red: #dc3545;
+$gray-light: #f8f9fa;
+$gray-medium: #6c757d;
+$gray-dark: #343a40;
+
+// Mixins
+@mixin pixel-border {
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0 #000;
+}
+
+@mixin button-style($bg-color) {
+  background: $bg-color;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  cursor: pointer;
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0 #000;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 #000;
+    filter: brightness(1.1);
+  }
+
+  &:disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+// Estilos Globais do Componente
+.game-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, $dark-blue 0%, $darker-blue 100%);
+  font-family: 'Courier New', monospace;
+  display: flex;
+  flex-direction: column;
+}
+
+// Header
+.game-header {
+  background: rgba(0, 20, 40, 0.95);
+  padding: 1rem 0;
+  border-bottom: 3px solid $primary-blue;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+
+  .header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h1 {
+      color: $primary-blue;
+      margin: 0;
+      font-size: 1.8rem;
+      text-shadow: 2px 2px 0 #000;
+    }
+  }
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  color: white;
+
+  .user-email {
+    background: rgba($primary-blue, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    border: 1px solid $primary-blue;
+  }
+
+  .cookies {
+    background: rgba($warning-yellow, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    border: 1px solid $warning-yellow;
+    font-weight: bold;
+  }
+}
+
+.btn-logout {
+  @include button-style($danger-red);
+}
+
+// Main Content
+.game-main {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+// Layout do Mapa
+.game-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  flex: 1;
+  min-height: 0;
+}
+
+// Mapa da Cidade
+.city-map-container {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1.5rem;
+  @include pixel-border;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  h2 {
+    color: $primary-blue;
+    margin: 0 0 1rem 0;
+    text-shadow: 1px 1px 0 #000;
+    flex-shrink: 0;
+  }
+}
+
+.city-map {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  background: 
+    linear-gradient(45deg, #2d5016 25%, transparent 25%),
+    linear-gradient(-45deg, #2d5016 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #2d5016 75%),
+    linear-gradient(-45deg, transparent 75%, #2d5016 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  border: 2px solid #000;
+  image-rendering: pixelated;
+  min-height: 400px;
+}
+
+// Pontos da Cidade
+.city-point {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 3px solid #000;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: 2px 2px 0 #000;
+  image-rendering: pixelated;
+
+  &:hover {
+    transform: scale(1.1);
+    z-index: 10;
+  }
+
+  &.selected {
+    border-color: $primary-blue;
+    box-shadow: 0 0 0 3px $primary-blue, 2px 2px 0 #000;
+  }
+
+  .point-icon {
+    font-size: 1.5rem;
+    margin-bottom: 2px;
+  }
+
+  .point-level {
+    font-size: 0.7rem;
+    background: #000;
+    color: white;
+    padding: 1px 4px;
+    border-radius: 3px;
+  }
+}
+
+// Elementos do mapa em pixel art
+.pixel-road {
+  position: absolute;
+  background: #4a4a4a;
+  border: 2px solid #333;
+
+  &.horizontal {
+    width: 100%;
+    height: 20px;
+  }
+
+  &.vertical {
+    width: 20px;
+    height: 100%;
+  }
+}
+
+.pixel-park {
+  position: absolute;
+  width: 80px;
+  height: 60px;
+  background: #27ae60;
+  border: 2px solid #1e8449;
+  box-shadow: 2px 2px 0 #000;
+}
+
+.pixel-building {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: #95a5a6;
+  border: 2px solid #7f8c8d;
+  box-shadow: 2px 2px 0 #000;
+}
+
+// Painel de Informações
+.info-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  height: 100%;
+  overflow-y: auto;
+}
+
+// Painéis comuns
+.point-info, .indicators-panel, .investments-panel, .cookie-sources-panel {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 1.5rem;
+  border-radius: 8px;
+  @include pixel-border;
+
+  h3 {
+    margin: 0 0 1rem 0;
+    color: $gray-dark;
+    border-bottom: 2px solid $primary-blue;
+    padding-bottom: 0.5rem;
+  }
+}
+
+// Informações do Ponto
+.point-stats {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+
+  .point-type, .point-level {
+    background: $primary-blue;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    border: 2px solid #000;
+  }
+}
+
+.btn-visit {
+  width: 100%;
+  @include button-style($primary-blue);
+  margin-top: 1rem;
+}
+
+// Indicadores
+.indicators-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.indicator {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  .indicator-name {
+    font-weight: bold;
+    min-width: 100px;
+    text-transform: capitalize;
+  }
+
+  .indicator-bar {
+    flex: 1;
+    height: 20px;
+    background: #ecf0f1;
+    border: 2px solid #000;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .indicator-fill {
+    height: 100%;
+    transition: width 0.5s ease;
+  }
+
+  .indicator-value {
+    font-weight: bold;
+    min-width: 40px;
+    text-align: right;
+  }
+}
+
+// Sistema de Cookies
+.cookie-sources-panel {
+  h3 {
+    border-bottom-color: $warning-yellow;
+  }
+}
+
+.cookie-sources-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.cookie-source {
+  background: #fff3cd;
+  padding: 1rem;
+  border: 2px solid $warning-yellow;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover {
+    background: #ffeaa7;
+    transform: translateY(-2px);
+  }
+
+  .source-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+
+    h4 {
+      margin: 0;
+      color: #856404;
+    }
+
+    .source-value {
+      background: $warning-yellow;
+      color: #856404;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-weight: bold;
+      border: 1px solid $warning-yellow;
+    }
+  }
+
+  .source-description {
+    margin: 0 0 1rem 0;
+    color: #856404;
+    font-size: 0.9rem;
+  }
+
+  .cooldown-bar {
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+  }
+
+  .cooldown-progress {
+    height: 100%;
+    background: $success-green;
+    transition: width 0.3s;
+  }
+
+  .cooldown-text {
+    text-align: center;
+    font-size: 0.8rem;
+    color: $gray-medium;
+    font-weight: bold;
+  }
+}
+
+// Sistema de Investimentos
+.investments-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.investment-card {
+  background: $gray-light;
+  padding: 1rem;
+  border: 2px solid #000;
+  border-radius: 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 4px 4px 0 #000;
+  }
+
+  .investment-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  h4 {
+    margin: 0 0 0.5rem 0;
+    color: $gray-dark;
+  }
+
+  .investment-impact {
+    color: $success-green;
+    font-weight: bold;
+    margin: 0.5rem 0;
+  }
+
+  .investment-cost {
+    background: #ffeaa7;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin: 0.5rem 0;
+    border: 1px solid #fdcb6e;
+  }
+}
+
+.btn-invest {
+  @include button-style($primary-blue);
+  width: 100%;
+}
+
+// Vista do Local
+.location-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  border: 4px solid #000;
+  box-shadow: 8px 8px 0 #000;
+  overflow: hidden;
+}
+
+.location-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, $primary-blue, $secondary-blue);
+  color: white;
+
+  h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    text-shadow: 2px 2px 0 #000;
+  }
+
+  .btn-back {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  .location-level {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: bold;
+    border: 2px solid white;
+  }
+}
+
+.location-content {
+  flex: 1;
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  overflow-y: auto;
+}
+
+.location-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.location-image {
+  text-align: center;
+  padding: 2rem;
+  background: $gray-light;
+  border-radius: 12px;
+  border: 3px solid #000;
+
+  .location-icon {
+    font-size: 6rem;
+    display: block;
+  }
+}
+
+.location-details {
+  h3 {
+    color: $gray-dark;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid $primary-blue;
+    padding-bottom: 0.5rem;
+  }
+
+  .location-description {
+    line-height: 1.6;
+    color: $gray-medium;
+    margin-bottom: 1.5rem;
+  }
+}
+
+.location-stats {
+  background: #e9ecef;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 2px solid #ced4da;
+
+  h4 {
+    margin: 0 0 0.5rem 0;
+    color: $gray-medium;
+  }
+
+  p {
+    margin: 0;
+    color: $gray-medium;
+    font-family: 'Courier New', monospace;
+  }
+}
+
+.location-upgrades {
+  h3 {
+    color: $gray-dark;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid $success-green;
+    padding-bottom: 0.5rem;
+  }
+}
+
+.upgrades-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.upgrade-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 3px solid $gray-medium;
+  transition: all 0.3s;
+
+  &.available {
+    border-color: $success-green;
+    background: #f8fff9;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 4px 4px 0 #000;
+    }
+  }
+
+  &.locked {
+    border-color: $gray-medium;
+    background: $gray-light;
+    opacity: 0.7;
+  }
+}
+
+.upgrade-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  h4 {
+    margin: 0;
+    color: $gray-dark;
+  }
+
+  .upgrade-level {
+    background: $gray-medium;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+  }
+}
+
+.upgrade-description {
+  color: $gray-medium;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.upgrade-impact {
+  margin-bottom: 1rem;
+
+  .impact-value {
+    background: $success-green;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: bold;
+    border: 2px solid #000;
+  }
+}
+
+.upgrade-cost {
+  background: #fff3cd;
+  padding: 0.75rem;
+  border-radius: 6px;
+  text-align: center;
+  margin-bottom: 1rem;
+  border: 2px solid $warning-yellow;
+  font-weight: bold;
+}
+
+.btn-upgrade {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  cursor: pointer;
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0 #000;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 #000;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+// Popup de Investimento
+.investment-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.investment-popup {
+  background: white;
+  border-radius: 12px;
+  border: 4px solid #000;
+  box-shadow: 8px 8px 0 #000;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 2px solid $primary-blue;
+  background: $gray-light;
+
+  h2 {
+    margin: 0;
+    color: $gray-dark;
+  }
+
+  .popup-close {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: $gray-medium;
+    line-height: 1;
+
+    &:hover {
+      color: $danger-red;
+    }
+  }
+}
+
+.popup-content {
+  padding: 1.5rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.investment-image {
+  flex-shrink: 0;
+
+  .investment-icon-large {
+    font-size: 4rem;
+    display: block;
+  }
+}
+
+.investment-details {
+  flex: 1;
+
+  h3 {
+    margin: 0 0 1rem 0;
+    color: $gray-dark;
+    font-size: 1.5rem;
+  }
+
+  .investment-description {
+    margin: 0 0 1.5rem 0;
+    color: $gray-medium;
+    line-height: 1.5;
+  }
+}
+
+.investment-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  .stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    background: $gray-light;
+    border-radius: 4px;
+
+    .stat-label {
+      font-weight: bold;
+      color: #495057;
+    }
+
+    .stat-value {
+      font-weight: bold;
+      color: $success-green;
+
+      &.insufficient {
+        color: $danger-red;
+      }
+    }
+  }
+}
+
+.popup-actions {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-top: 2px solid #e9ecef;
+  background: $gray-light;
+
+  button {
+    flex: 1;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    cursor: pointer;
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0 #000;
+    transition: all 0.2s;
+
+    &:hover:not(:disabled) {
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0 #000;
+    }
+  }
+
+  .btn-cancel {
+    background: $gray-medium;
+    color: white;
+
+    &:hover {
+      background: darken($gray-medium, 10%);
+    }
+  }
+
+  .btn-confirm {
+    background: $primary-blue;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: darken($primary-blue, 10%);
+    }
+  }
+}
+
+// Função para cores dos indicadores
+@function getIndicatorColor($value) {
+  @if $value >= 80 { @return $success-green; }
+  @if $value >= 60 { @return $warning-yellow; }
+  @if $value >= 40 { @return #fd7e14; }
+  @return $danger-red;
+}
+
+// Aplica cores dinâmicas aos indicadores
+@for $i from 0 through 100 {
+  .indicator-fill[style*="width: #{$i}%"] {
+    background: getIndicatorColor($i) !important;
+  }
+}
+
+// Responsividade
+@media (max-width: 1024px) {
+  .game-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .city-map {
+    height: 400px;
+    min-height: 400px;
+  }
+
+  .location-content {
+    grid-template-columns: 1fr;
+  }
+
+  .location-image .location-icon {
+    font-size: 4rem;
+  }
+
+  .game-header .header-content {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .user-info {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .game-main {
+    padding: 1rem;
+  }
+
+  .popup-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .investment-image .investment-icon-large {
+    font-size: 3rem;
+  }
+
+  .popup-actions {
+    flex-direction: column;
+  }
+}
+
+// Garantir que o host ocupe 100%
+:host {
+  display: block;
+  height: 100%;
+}
+
+// ... (mantenha todo o CSS anterior)
+
+// Novos estilos para o mapa organizado
+.city-map {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  background: 
+    // Grade de fundo mais sutil
+    linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255,255,255,0.1) 1px, transparent 1px),
+    // Cor base
+    linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  background-size: 50px 50px;
+  border: 3px solid #000;
+  image-rendering: pixelated;
+  min-height: 500px;
+  overflow: hidden;
+}
+
+// Setores do mapa
+.map-sector {
+  position: absolute;
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  pointer-events: none;
+
+  .sector-label {
+    position: absolute;
+    top: -25px;
+    left: 5px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  &.sector-zt01 {
+    top: 50px;
+    left: 50px;
+    width: 500px;
+    height: 200px;
+    border-color: #00b4d8;
+    background: rgba(0, 180, 216, 0.1);
+  }
+
+  &.sector-zt02 {
+    top: 50px;
+    left: 570px;
+    width: 300px;
+    height: 250px;
+    border-color: #28a745;
+    background: rgba(40, 167, 69, 0.1);
+  }
+
+  &.sector-zt03 {
+    top: 320px;
+    left: 50px;
+    width: 600px;
+    height: 200px;
+    border-color: #ffc107;
+    background: rgba(255, 193, 7, 0.1);
+  }
+
+  &.sector-zt04 {
+    top: 320px;
+    left: 670px;
+    width: 200px;
+    height: 200px;
+    border-color: #e83e8c;
+    background: rgba(232, 62, 140, 0.1);
+  }
+}
+
+// Ruas e avenidas principais
+.map-road {
+  position: absolute;
+  background: #4a4a4a;
+  border: 2px solid #333;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+
+  &.avenida-central {
+    top: 280px;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    background: #666;
+    border: 2px solid #555;
+  }
+
+  &.rua-horizontal-1 {
+    top: 120px;
+    left: 0;
+    width: 100%;
+    height: 12px;
+  }
+
+  &.rua-horizontal-2 {
+    top: 450px;
+    left: 0;
+    width: 100%;
+    height: 12px;
+  }
+
+  &.rua-vertical-1 {
+    top: 0;
+    left: 300px;
+    width: 12px;
+    height: 100%;
+  }
+
+  &.rua-vertical-2 {
+    top: 0;
+    left: 600px;
+    width: 12px;
+    height: 100%;
+  }
+}
+
+// Áreas verdes
+.map-park {
+  position: absolute;
+  background: #27ae60;
+  border: 2px solid #1e8449;
+  box-shadow: 2px 2px 0 #000;
+
+  &.park-large {
+    width: 180px;
+    height: 120px;
+    top: 350px;
+    left: 680px;
+    border-radius: 15px;
+  }
+
+  &.park-small {
+    width: 100px;
+    height: 80px;
+    top: 180px;
+    left: 650px;
+    border-radius: 10px;
+  }
+}
+
+// Área residencial
+.residential-area {
+  position: absolute;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+
+  &.area-norte {
+    top: 60px;
+    left: 200px;
+    width: 300px;
+    height: 150px;
+  }
+
+  .residential-building {
+    width: 25px;
+    height: 30px;
+    background: #95a5a6;
+    border: 2px solid #7f8c8d;
+    box-shadow: 1px 1px 0 #000;
+    
+    &.small { 
+      width: 20px; 
+      height: 25px; 
+    }
+    &.medium { 
+      width: 30px; 
+      height: 35px; 
+    }
+  }
+}
+
+// Área industrial
+.industrial-area {
+  position: absolute;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  &.area-sul {
+    top: 350px;
+    left: 100px;
+    width: 400px;
+    height: 120px;
+  }
+
+  .industrial-building {
+    width: 40px;
+    height: 45px;
+    background: #7f8c8d;
+    border: 2px solid #5a6268;
+    box-shadow: 2px 2px 0 #000;
+    
+    &.large { 
+      width: 50px; 
+      height: 55px; 
+    }
+  }
+}
+
+// Pontos da Cidade (atualizado)
+.city-point {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 3px solid #000;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  box-shadow: 3px 3px 0 #000;
+  image-rendering: pixelated;
+  z-index: 10;
+
+  &:hover {
+    transform: scale(1.15);
+    z-index: 100;
+    box-shadow: 0 0 20px rgba(0, 180, 216, 0.5);
+  }
+
+  &.selected {
+    border-color: $primary-blue;
+    box-shadow: 0 0 0 4px $primary-blue, 3px 3px 0 #000;
+    animation: pulse 2s infinite;
+  }
+
+  .point-icon {
+    font-size: 1.8rem;
+    margin-bottom: 4px;
+    filter: drop-shadow(1px 1px 0 #000);
+  }
+
+  .point-level {
+    font-size: 0.75rem;
+    background: #000;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: bold;
+    border: 1px solid #333;
+  }
+}
+
+// Animação de pulso para pontos selecionados
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(0, 180, 216, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(0, 180, 216, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 180, 216, 0); }
+}
+
+// Legenda do mapa
+.map-legend {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 10px;
+  border-radius: 6px;
+  border: 2px solid #000;
+  color: white;
+  font-size: 0.8rem;
+
+  .legend-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: $primary-blue;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 2px 0;
+  }
+
+  .legend-color {
+    width: 12px;
+    height: 12px;
+    border: 1px solid #fff;
+    
+    &.zt01 { background: rgba(0, 180, 216, 0.6); }
+    &.zt02 { background: rgba(40, 167, 69, 0.6); }
+    &.zt03 { background: rgba(255, 193, 7, 0.6); }
+    &.zt04 { background: rgba(232, 62, 140, 0.6); }
+  }
+}
+
+// Ajustes de responsividade para o novo mapa
+@media (max-width: 1024px) {
+  .city-map {
+    min-height: 400px;
+  }
+
+  .map-sector {
+    &.sector-zt01,
+    &.sector-zt02,
+    &.sector-zt03,
+    &.sector-zt04 {
+      width: 45%;
+      height: 45%;
+    }
+
+    &.sector-zt01 { top: 5%; left: 5%; }
+    &.sector-zt02 { top: 5%; left: 50%; }
+    &.sector-zt03 { top: 50%; left: 5%; }
+    &.sector-zt04 { top: 50%; left: 50%; }
+  }
+
+  .city-point {
+    width: 50px;
+    height: 50px;
+
+    .point-icon {
+      font-size: 1.2rem;
+    }
+  }
+
+  // Estilos para imagens reais no popup
+.investment-image-real {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0 #000;
+  image-rendering: pixelated;
+}
+
+// Ajuste o container da imagem
+.investment-image {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .investment-icon-large {
+    font-size: 4rem;
+    display: block;
+  }
+}
+
+// Ajuste o layout do popup para imagens
+.popup-content {
+  padding: 1.5rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+
+  // Layout responsivo para mobile
+  @media (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+    
+    .investment-image-real {
+      width: 120px;
+      height: 120px;
+    }
+  }
+}
+
+// Efeito hover na imagem
+.investment-image-real:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+}

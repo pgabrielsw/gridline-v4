@@ -1,0 +1,320 @@
+﻿<div class="game-container">
+  <header class="game-header">
+    <div class="header-content">
+      <h1>🏙️ Gridline V2</h1>
+      <div class="user-info">
+        <span class="user-email">{{ userEmail }}</span>
+        <div class="cookies">🍪 {{ cookies }} Cookies</div>
+        <button class="btn-logout" (click)="logout()">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="game-main">
+    <!-- Vista do Mapa -->
+    <div *ngIf="currentView === 'map'" class="game-layout">
+      
+      <!-- Mapa da Cidade -->
+      <div class="city-map-container">
+        <h2>🗺️ Mapa da Gridline - Setores ZT</h2>
+        <div class="city-map">
+          <!-- Setores -->
+          <div class="map-sector sector-zt01">
+            <div class="sector-label">ZT-01 - Centro Tecnológico</div>
+          </div>
+          <div class="map-sector sector-zt02">
+            <div class="sector-label">ZT-02 - Setor Residencial</div>
+          </div>
+          <div class="map-sector sector-zt03">
+            <div class="sector-label">ZT-03 - Polo Industrial</div>
+          </div>
+          <div class="map-sector sector-zt04">
+            <div class="sector-label">ZT-04 - Área Cultural</div>
+          </div>
+
+          <!-- Ruas -->
+          <div class="map-road avenida-central"></div>
+          <div class="map-road rua-horizontal-1"></div>
+          <div class="map-road rua-horizontal-2"></div>
+          <div class="map-road rua-vertical-1"></div>
+          <div class="map-road rua-vertical-2"></div>
+
+          <!-- Áreas Verdes -->
+          <div class="map-park park-large"></div>
+          <div class="map-park park-small"></div>
+
+          <!-- Área Residencial -->
+          <div class="residential-area area-norte">
+            <div class="residential-building small"></div>
+            <div class="residential-building"></div>
+            <div class="residential-building medium"></div>
+            <div class="residential-building"></div>
+            <div class="residential-building small"></div>
+            <div class="residential-building"></div>
+            <div class="residential-building medium"></div>
+            <div class="residential-building"></div>
+          </div>
+
+          <!-- Área Industrial -->
+          <div class="industrial-area area-sul">
+            <div class="industrial-building"></div>
+            <div class="industrial-building large"></div>
+            <div class="industrial-building"></div>
+            <div class="industrial-building"></div>
+            <div class="industrial-building large"></div>
+          </div>
+
+          <!-- Pontos da Cidade -->
+          <div 
+            *ngFor="let point of cityPoints"
+            class="city-point"
+            [class.selected]="selectedPoint?.id === point.id"
+            [style.left.px]="point.x"
+            [style.top.px]="point.y"
+            (click)="selectPoint(point)"
+            [title]="point.name"
+          >
+            <span class="point-icon">{{ point.image }}</span>
+            <span class="point-level">Lv.{{ point.level }}</span>
+          </div>
+
+          <!-- Legenda -->
+          <div class="map-legend">
+            <div class="legend-title">Setores:</div>
+            <div class="legend-item">
+              <div class="legend-color zt01"></div>
+              <span>ZT-01 - Centro</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color zt02"></div>
+              <span>ZT-02 - Residencial</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color zt03"></div>
+              <span>ZT-03 - Industrial</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color zt04"></div>
+              <span>ZT-04 - Cultural</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Painel de Informações -->
+      <div class="info-panel">
+        <!-- Sistema de Coleta de Cookies -->
+        <div class="cookie-sources-panel">
+          <h3>💰 Fontes de Cookies</h3>
+          <div class="cookie-sources-grid">
+            <div 
+              *ngFor="let source of cookieSources; let i = index"
+              class="cookie-source"
+              (click)="collectCookies(source, i)"
+            >
+              <div class="source-header">
+                <h4>{{ source.name }}</h4>
+                <span class="source-value">+{{ source.cookies }} 🍪</span>
+              </div>
+              <p class="source-description">{{ source.description }}</p>
+              <div class="cooldown-bar">
+                <div 
+                  class="cooldown-progress"
+                  [style.width.%]="getCooldownProgress(source)"
+                ></div>
+              </div>
+              <div class="cooldown-text">
+                {{ getRemainingTime(source) }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Informações do Ponto Selecionado -->
+        <div *ngIf="selectedPoint" class="point-info">
+          <h3>{{ selectedPoint.name }}</h3>
+          <p>{{ selectedPoint.info }}</p>
+          <div class="point-stats">
+            <span class="point-type">{{ selectedPoint.type }}</span>
+            <span class="point-level">Nível {{ selectedPoint.level }}</span>
+          </div>
+          <button class="btn-visit" (click)="selectPoint(selectedPoint)">
+            🚀 Visitar Local
+          </button>
+        </div>
+
+        <!-- Indicadores da Cidade -->
+        <div class="indicators-panel">
+          <h3>📊 Indicadores da Cidade</h3>
+          <div class="indicators-grid">
+            <div 
+              *ngFor="let indicator of indicators | keyvalue" 
+              class="indicator"
+            >
+              <span class="indicator-name">{{ indicator.key }}</span>
+              <div class="indicator-bar">
+                <div 
+                  class="indicator-fill"
+                  [style.width.%]="indicator.value"
+                  [style.background]="getIndicatorColor(indicator.value)"
+                ></div>
+              </div>
+              <span class="indicator-value">{{ indicator.value }}%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sistema de Investimentos Gerais -->
+        <div class="investments-panel">
+          <h3>💼 Investimentos Gerais</h3>
+          <div class="investments-grid">
+            <div 
+              *ngFor="let investment of investments"
+              class="investment-card"
+              (click)="openInvestmentPopup(investment)"
+            >
+              <div class="investment-icon">{{ getPointIcon(investment.area.toLowerCase()) }}</div>
+              <h4>{{ investment.area }}</h4>
+              <p class="investment-impact">{{ investment.impact }}</p>
+              <div class="investment-cost">
+                🍪 {{ investment.cost }} Cookies
+              </div>
+              <button 
+                class="btn-invest"
+                [disabled]="cookies < investment.cost"
+              >
+                Investir
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vista do Local -->
+    <div *ngIf="currentView === 'location' && selectedPoint" class="location-view">
+      <div class="location-header">
+        <button class="btn-back" (click)="backToMap()">← Voltar ao Mapa</button>
+        <h2>{{ selectedPoint.image }} {{ selectedPoint.name }}</h2>
+        <div class="location-level">Nível {{ selectedPoint.level }}</div>
+      </div>
+
+      <div class="location-content">
+        <div class="location-info">
+          <div class="location-image">
+            <span class="location-icon">{{ selectedPoint.image }}</span>
+          </div>
+          <div class="location-details">
+            <h3>📋 Sobre o Local</h3>
+            <p class="location-description">{{ selectedPoint.description }}</p>
+            <div class="location-stats">
+              <h4>📊 Estatísticas Atuais</h4>
+              <p>{{ selectedPoint.info }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="location-upgrades">
+          <h3>🛠️ Melhorias Disponíveis</h3>
+          <div class="upgrades-grid">
+            <div 
+              *ngFor="let upgrade of selectedPoint.upgrades"
+              class="upgrade-card"
+              [class.available]="cookies >= upgrade.cost && selectedPoint.level >= upgrade.requiredLevel"
+              [class.locked]="selectedPoint.level < upgrade.requiredLevel"
+            >
+              <div class="upgrade-header">
+                <h4>{{ upgrade.name }}</h4>
+                <span class="upgrade-level">Nv. {{ upgrade.requiredLevel }}+</span>
+              </div>
+              <p class="upgrade-description">{{ upgrade.description }}</p>
+              <div class="upgrade-impact">
+                <span class="impact-value">{{ upgrade.impact }}</span>
+              </div>
+              <div class="upgrade-cost">
+                🍪 {{ upgrade.cost }} Cookies
+              </div>
+              <button 
+                class="btn-upgrade"
+                (click)="investInLocation(upgrade)"
+                [disabled]="cookies < upgrade.cost || selectedPoint.level < upgrade.requiredLevel"
+              >
+                <span *ngIf="selectedPoint.level < upgrade.requiredLevel">🔒 Nível Insuficiente</span>
+                <span *ngIf="selectedPoint.level >= upgrade.requiredLevel && cookies >= upgrade.cost">🛠️ Melhorar</span>
+                <span *ngIf="selectedPoint.level >= upgrade.requiredLevel && cookies < upgrade.cost">💰 Cookies Insuficientes</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Popup de Investimento com Imagens -->
+  <div *ngIf="showInvestmentPopup && selectedInvestment" class="investment-popup-overlay">
+    <div class="investment-popup">
+      <div class="popup-header">
+        <h2>Confirmar Investimento</h2>
+        <button class="popup-close" (click)="closeInvestmentPopup()">×</button>
+      </div>
+      
+      <div class="popup-content">
+        <div class="investment-image">
+          <!-- Imagem real se for URL -->
+          <img 
+            *ngIf="isImageUrl(selectedInvestment.image)"
+            [src]="selectedInvestment.image" 
+            [alt]="selectedInvestment.area"
+            class="investment-image-real"
+            (error)="handleImageError($event, selectedInvestment)"
+          >
+          <!-- Emoji se não for URL -->
+          <span 
+            *ngIf="!isImageUrl(selectedInvestment.image)"
+            class="investment-icon-large"
+          >
+            {{ selectedInvestment.image }}
+          </span>
+        </div>
+        
+        <div class="investment-details">
+          <h3>{{ selectedInvestment.area }}</h3>
+          <p class="investment-description">{{ selectedInvestment.description }}</p>
+          
+          <div class="investment-stats">
+            <div class="stat">
+              <span class="stat-label">Custo:</span>
+              <span class="stat-value">🍪 {{ selectedInvestment.cost }} Cookies</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Impacto:</span>
+              <span class="stat-value">{{ selectedInvestment.impact }}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Seus Cookies:</span>
+              <span class="stat-value" [class.insufficient]="cookies < selectedInvestment.cost">
+                🍪 {{ cookies }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="popup-actions">
+        <button 
+          class="btn-cancel"
+          (click)="closeInvestmentPopup()"
+        >
+          Cancelar
+        </button>
+        <button 
+          class="btn-confirm"
+          (click)="confirmInvestment()"
+          [disabled]="cookies < selectedInvestment.cost"
+        >
+          Confirmar Investimento
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
