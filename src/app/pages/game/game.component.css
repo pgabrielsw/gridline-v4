@@ -68,7 +68,7 @@
 .game-wrapper {
   min-height: 100vh;
   background: linear-gradient(135deg, #1a1d29 0%, #242835 50%, #2d3142 100%);
-  padding: 20px;
+  padding: 0px;
   animation: fadeIn 0.6s ease-out;
 }
 

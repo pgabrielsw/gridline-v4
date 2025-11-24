@@ -1,5 +1,3 @@
 com\gridline\config\CorsConfig$1.class
 com\gridline\config\CorsConfig.class
 com\gridline\GridlineApplication.class
-com\gridline\controller\TestController$AppInfo.class
-com\gridline\controller\TestController.class

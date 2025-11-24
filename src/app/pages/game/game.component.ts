@@ -7,7 +7,7 @@ import { GameService } from '../../core/services/game.service';
 interface CityPoint {
   id: number;
   name: string;
-  type: 'health' | 'security' | 'transport' | 'energy' | 'environment' | 'government' | 'education' | 'commerce' | 'industry' | 'culture' | 'sports';
+  type: 'saúde' | 'Segurança' | 'Transporte' | 'Energia' | 'ambiente' | 'government' | 'education' | 'commerce' | 'industry' | 'culture' | 'sports';
   x: number;
   y: number;
   info: string;
@@ -59,11 +59,11 @@ export class GameComponent implements OnInit {
   
   // Indicadores da cidade
   indicators = {
-    energy: 65,
-    transport: 45,
-    security: 70,
-    environment: 60,
-    health: 75
+    Energia: 65,
+    Transporte: 45,
+    Segurança: 70,
+    ambiente: 60,
+    saúde: 75
   };
 
   // Fontes de Cookies
@@ -100,7 +100,7 @@ export class GameComponent implements OnInit {
     {
       id: 1,
       name: 'Hospital Municipal',
-      type: 'health',
+      type: 'saúde',
       x: 150,
       y: 120,
       info: 'Atendimentos: 85/dia | Capacidade: 90% | Alertas: 2',
@@ -154,7 +154,7 @@ export class GameComponent implements OnInit {
     {
       id: 3,
       name: 'Delegacia Central',
-      type: 'security',
+      type: 'Segurança',
       x: 450,
       y: 120,
       info: 'Ocorrências: 12/dia | Segurança: 70% | Patrulhas: 8',
@@ -183,12 +183,12 @@ export class GameComponent implements OnInit {
     {
       id: 4,
       name: 'Estação de Ônibus Inteligente',
-      type: 'transport',
+      type: 'Transporte',
       x: 200,
       y: 250,
       info: 'Fluxo: 450/dia | Tráfego: 45% | Pontualidade: 82%',
       level: 1,
-      description: 'Hub de transporte público equipado com tecnologia inteligente.',
+      description: 'Hub de Transporte público equipado com tecnologia inteligente.',
       image: '🚌',
       upgrades: [
         {
@@ -266,7 +266,7 @@ export class GameComponent implements OnInit {
     {
       id: 7,
       name: 'Estação de Energia Solar',
-      type: 'energy',
+      type: 'Energia',
       x: 100,
       y: 400,
       info: 'Produção: 85MW | Autonomia: 65% | Eficiência: 78%',
@@ -293,7 +293,7 @@ export class GameComponent implements OnInit {
     {
       id: 8,
       name: 'Centro de Reciclagem',
-      type: 'environment',
+      type: 'ambiente',
       x: 250,
       y: 420,
       info: 'Resíduos: 12t/dia | Reciclagem: 60% | Lotação: 70%',
@@ -332,7 +332,7 @@ export class GameComponent implements OnInit {
           name: 'Infraestrutura Logística',
           cost: 380,
           impact: '+12 Indústria',
-          description: 'Melhoria no sistema de transporte de cargas.',
+          description: 'Melhoria no sistema de Transporte de cargas.',
           requiredLevel: 1
         },
         {
@@ -347,7 +347,7 @@ export class GameComponent implements OnInit {
     {
       id: 10,
       name: 'Estação de Tratamento',
-      type: 'environment',
+      type: 'ambiente',
       x: 550,
       y: 420,
       info: 'Capacidade: 85% | Qualidade: 88% | Eficiência: 75%',
@@ -376,7 +376,7 @@ export class GameComponent implements OnInit {
     {
       id: 11,
       name: 'Parque Ecológico',
-      type: 'environment',
+      type: 'ambiente',
       x: 600,
       y: 200,
       info: 'Qualidade do Ar: 60% | Temperatura: 24°C | Ocupação: 35%',
@@ -606,20 +606,20 @@ export class GameComponent implements OnInit {
       const impactValue = parseInt(upgrade.impact.replace('+', '').replace(' Todos', ''));
       
       switch(this.selectedPoint.type) {
-        case 'health':
-          this.indicators.health = Math.min(100, this.indicators.health + impactValue);
+        case 'saúde':
+          this.indicators.saúde = Math.min(100, this.indicators.saúde + impactValue);
           break;
-        case 'security':
-          this.indicators.security = Math.min(100, this.indicators.security + impactValue);
+        case 'Segurança':
+          this.indicators.Segurança = Math.min(100, this.indicators.Segurança + impactValue);
           break;
-        case 'energy':
-          this.indicators.energy = Math.min(100, this.indicators.energy + impactValue);
+        case 'Energia':
+          this.indicators.Energia = Math.min(100, this.indicators.Energia + impactValue);
           break;
-        case 'transport':
-          this.indicators.transport = Math.min(100, this.indicators.transport + impactValue);
+        case 'Transporte':
+          this.indicators.Transporte = Math.min(100, this.indicators.Transporte + impactValue);
           break;
-        case 'environment':
-          this.indicators.environment = Math.min(100, this.indicators.environment + impactValue);
+        case 'ambiente':
+          this.indicators.ambiente = Math.min(100, this.indicators.ambiente + impactValue);
           break;
         case 'government':
           // Melhora todos os indicadores
@@ -629,24 +629,24 @@ export class GameComponent implements OnInit {
           });
           break;
         case 'education':
-          this.indicators.health = Math.min(100, this.indicators.health + 5);
-          this.indicators.transport = Math.min(100, this.indicators.transport + impactValue);
+          this.indicators.saúde = Math.min(100, this.indicators.saúde + 5);
+          this.indicators.Transporte = Math.min(100, this.indicators.Transporte + impactValue);
           break;
         case 'commerce':
-          this.indicators.transport = Math.min(100, this.indicators.transport + impactValue);
-          this.indicators.security = Math.min(100, this.indicators.security + 5);
+          this.indicators.Transporte = Math.min(100, this.indicators.Transporte + impactValue);
+          this.indicators.Segurança = Math.min(100, this.indicators.Segurança + 5);
           break;
         case 'industry':
-          this.indicators.energy = Math.min(100, this.indicators.energy + impactValue);
-          this.indicators.environment = Math.min(100, this.indicators.environment - 3);
+          this.indicators.Energia = Math.min(100, this.indicators.Energia + impactValue);
+          this.indicators.ambiente = Math.min(100, this.indicators.ambiente - 3);
           break;
         case 'culture':
-          this.indicators.health = Math.min(100, this.indicators.health + impactValue);
-          this.indicators.security = Math.min(100, this.indicators.security + 5);
+          this.indicators.saúde = Math.min(100, this.indicators.saúde + impactValue);
+          this.indicators.Segurança = Math.min(100, this.indicators.Segurança + 5);
           break;
         case 'sports':
-          this.indicators.health = Math.min(100, this.indicators.health + impactValue);
-          this.indicators.environment = Math.min(100, this.indicators.environment + 3);
+          this.indicators.saúde = Math.min(100, this.indicators.saúde + impactValue);
+          this.indicators.ambiente = Math.min(100, this.indicators.ambiente + 3);
           break;
       }
       
@@ -659,11 +659,11 @@ export class GameComponent implements OnInit {
     if (this.cookies >= cost) {
       this.cookies -= cost;
       switch(area) {
-        case 'Energia': this.indicators.energy = Math.min(100, this.indicators.energy + 10); break;
-        case 'Transporte': this.indicators.transport = Math.min(100, this.indicators.transport + 15); break;
-        case 'Segurança': this.indicators.security = Math.min(100, this.indicators.security + 12); break;
-        case 'Saúde': this.indicators.health = Math.min(100, this.indicators.health + 8); break;
-        case 'Meio Ambiente': this.indicators.environment = Math.min(100, this.indicators.environment + 13); break;
+        case 'Energia': this.indicators.Energia = Math.min(100, this.indicators.Energia + 10); break;
+        case 'Transporte': this.indicators.Transporte = Math.min(100, this.indicators.Transporte + 15); break;
+        case 'Segurança': this.indicators.Segurança = Math.min(100, this.indicators.Segurança + 12); break;
+        case 'Saúde': this.indicators.saúde = Math.min(100, this.indicators.saúde + 8); break;
+        case 'Meio Ambiente': this.indicators.ambiente = Math.min(100, this.indicators.ambiente + 13); break;
       }
       this.updateCityPointsInfo(area);
     }
@@ -672,22 +672,22 @@ export class GameComponent implements OnInit {
   private updateCityPointsInfo(area: string): void {
     this.cityPoints.forEach(point => {
       switch(area) {
-        case 'Energia': if (point.type === 'energy') { point.level++; point.info = this.generateUpdatedInfo(point); } break;
-        case 'Transporte': if (point.type === 'transport') { point.level++; point.info = this.generateUpdatedInfo(point); } break;
-        case 'Segurança': if (point.type === 'security') { point.level++; point.info = this.generateUpdatedInfo(point); } break;
-        case 'Saúde': if (point.type === 'health') { point.level++; point.info = this.generateUpdatedInfo(point); } break;
-        case 'Meio Ambiente': if (point.type === 'environment') { point.level++; point.info = this.generateUpdatedInfo(point); } break;
+        case 'Energia': if (point.type === 'Energia') { point.level++; point.info = this.generateUpdatedInfo(point); } break;
+        case 'Transporte': if (point.type === 'Transporte') { point.level++; point.info = this.generateUpdatedInfo(point); } break;
+        case 'Segurança': if (point.type === 'Segurança') { point.level++; point.info = this.generateUpdatedInfo(point); } break;
+        case 'Saúde': if (point.type === 'saúde') { point.level++; point.info = this.generateUpdatedInfo(point); } break;
+        case 'Meio Ambiente': if (point.type === 'ambiente') { point.level++; point.info = this.generateUpdatedInfo(point); } break;
       }
     });
   }
 
   private generateUpdatedInfo(point: CityPoint): string {
     const improvements: { [key in CityPoint['type']]: string[] } = {
-      health: ['Capacidade: 95%', 'Atendimentos: 92/dia', 'Alertas: 1'],
-      security: ['Segurança: 82%', 'Ocorrências: 8/dia', 'Patrulhas: 12'],
-      energy: ['Produção: 95MW', 'Autonomia: 75%', 'Eficiência: 85%'],
-      transport: ['Tráfego: 60%', 'Fluxo: 520/dia', 'Pontualidade: 90%'],
-      environment: ['Qualidade Ar: 70%', 'Reciclagem: 73%', 'Ocupação: 45%'],
+      saúde: ['Capacidade: 95%', 'Atendimentos: 92/dia', 'Alertas: 1'],
+      Segurança: ['Segurança: 82%', 'Ocorrências: 8/dia', 'Patrulhas: 12'],
+      Energia: ['Produção: 95MW', 'Autonomia: 75%', 'Eficiência: 85%'],
+      Transporte: ['Tráfego: 60%', 'Fluxo: 520/dia', 'Pontualidade: 90%'],
+      ambiente: ['Qualidade Ar: 70%', 'Reciclagem: 73%', 'Ocupação: 45%'],
       government: ['Projetos: 12', 'Investimentos: 3.2M', 'Satisfação: 75%'],
       education: ['Alunos: 380', 'Qualificação: 85%', 'Empregabilidade: 78%'],
       commerce: ['Lojas: 58', 'Movimento: 1500/dia', 'Satisfação: 82%'],
@@ -706,14 +706,21 @@ export class GameComponent implements OnInit {
   }
 
   getPointIcon(type: string): string {
-    const icons: { [key: string]: string } = {
-      health: '🏥', security: '🚓', transport: '🚌', 
-      energy: '⚡', environment: '🌳', government: '🏛️',
-      education: '🏫', commerce: '🏬', industry: '🏭',
-      culture: '🎭', sports: '⚽'
-    };
-    return icons[type] || '📍';
-  }
+  const icons: { [key: string]: string } = {
+    saúde: '🏥',
+    Segurança: '🚓',
+    Transporte: '🚌',
+    Energia: '⚡',
+    ambiente: '🌳',
+    government: '🏛️',
+    education: '🏫',
+    commerce: '🏬',
+    industry: '🏭',
+    culture: '🎭',
+    sports: '⚽'
+  };
+  return icons[type] || '📍';
+}
 
   // Método para salvar o jogo
   saveGame(): void {

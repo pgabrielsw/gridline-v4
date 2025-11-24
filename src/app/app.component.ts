@@ -1,23 +1,23 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { BackendTestComponent } from './components/backend-test/backend-test.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, BackendTestComponent],
+  imports: [CommonModule, RouterOutlet], 
   template: `
     <div class="app">
-      <h1>🏙️ Gridline V2</h1>
-      <app-backend-test></app-backend-test>
       <router-outlet></router-outlet>
     </div>
   `,
   styles: [`
     .app {
-      padding: 20px;
+      padding: 0; 
+      margin: 0; 
       font-family: Arial, sans-serif;
+      min-height: 100vh;
+      width: 100%;
     }
     h1 {
       color: #333;
