@@ -2,6 +2,7 @@
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { GameService } from '../../core/services/game.service';
 
 interface CityPoint {
   id: number;
@@ -456,50 +457,51 @@ export class GameComponent implements OnInit {
   ];
 
   investments: Investment[] = [
-  { 
-    area: 'Energia', 
-    cost: 200, 
-    impact: '+10 Energia',
-    description: 'Instalação de painéis solares avançados e turbinas eólicas para aumentar a produção de energia limpa. Esta melhoria reduz a dependência de combustíveis fósseis em 40%.',
-    image: 'assets/images/investments/energy.jpg',
-    imageType: 'local'
-  },
-  { 
-    area: 'Transporte', 
-    cost: 150, 
-    impact: '+15 Transporte',
-    description: 'Implementação de ônibus elétricos e sistemas de tráfego inteligente para melhorar a mobilidade urbana. Reduz o tempo de deslocamento em 25%.',
-    image: 'assets/images/investments/transport.jpg',
-    imageType: 'local'
-  },
-  { 
-    area: 'Segurança', 
-    cost: 180, 
-    impact: '+12 Segurança',
-    description: 'Instalação de câmeras de vigilância inteligentes e aumento do efetivo policial nas ruas. Reduz crimes em 30% nas áreas monitoradas.',
-    image: 'assets/images/investments/security.jpg',
-    imageType: 'local'
-  },
-  { 
-    area: 'Saúde', 
-    cost: 220, 
-    impact: '+8 Saúde',
-    description: 'Modernização do hospital com novos equipamentos médicos e contratação de especialistas. Aumenta a capacidade de atendimento em 35%.',
-    image: 'assets/images/investments/health.jpg',
-    imageType: 'local'
-  },
-  { 
-    area: 'Meio Ambiente', 
-    cost: 170, 
-    impact: '+13 Meio Ambiente',
-    description: 'Expansão das áreas verdes e implantação de sistema de reciclagem mais eficiente. Melhora a qualidade do ar em 20%.',
-    image: 'assets/images/investments/environment.jpg',
-    imageType: 'local'
-  }
-];
+    { 
+      area: 'Energia', 
+      cost: 200, 
+      impact: '+10 Energia',
+      description: 'Instalação de painéis solares avançados e turbinas eólicas para aumentar a produção de energia limpa.',
+      image: '⚡',
+      imageType: 'emoji'
+    },
+    { 
+      area: 'Transporte', 
+      cost: 150, 
+      impact: '+15 Transporte',
+      description: 'Implementação de ônibus elétricos e sistemas de tráfego inteligente para melhorar a mobilidade urbana.',
+      image: '🚌',
+      imageType: 'emoji'
+    },
+    { 
+      area: 'Segurança', 
+      cost: 180, 
+      impact: '+12 Segurança',
+      description: 'Instalação de câmeras de vigilância inteligentes e aumento do efetivo policial nas ruas.',
+      image: '🚓',
+      imageType: 'emoji'
+    },
+    { 
+      area: 'Saúde', 
+      cost: 220, 
+      impact: '+8 Saúde',
+      description: 'Modernização do hospital com novos equipamentos médicos e contratação de especialistas.',
+      image: '🏥',
+      imageType: 'emoji'
+    },
+    { 
+      area: 'Meio Ambiente', 
+      cost: 170, 
+      impact: '+13 Meio Ambiente',
+      description: 'Expansão das áreas verdes e implantação de sistema de reciclagem mais eficiente.',
+      image: '🌳',
+      imageType: 'emoji'
+    }
+  ];
 
   constructor(
     private authService: AuthService,
+    private gameService: GameService,
     private router: Router
   ) {}
 
@@ -713,27 +715,59 @@ export class GameComponent implements OnInit {
     return icons[type] || '📍';
   }
 
-  // Métodos para imagens
-  isImageUrl(url: string): boolean {
-    return url.startsWith('http') || (url.startsWith('assets/') && !url.includes('emoji'));
+  // Método para salvar o jogo
+  saveGame(): void {
+    const gameData = {
+      cookies: this.cookies,
+      indicators: this.indicators,
+      cityPoints: this.cityPoints,
+      selectedPoint: this.selectedPoint,
+      currentView: this.currentView
+    };
+
+    this.gameService.saveGame('AutoSave', gameData).subscribe({
+      next: (save) => {
+        console.log('Jogo salvo:', save);
+      },
+      error: (error) => {
+        console.error('Erro ao salvar:', error);
+      }
+    });
   }
 
-  handleImageError(event: any, investment: Investment): void {
-    console.error(`Erro ao carregar imagem: ${investment.image}`);
-    const emojiMap: { [key: string]: string } = {
-      'Energia': '⚡',
-      'Transporte': '🚌',
-      'Segurança': '🚓',
-      'Saúde': '🏥',
-      'Meio Ambiente': '🌳'
-    };
-    
-    event.target.style.display = 'none';
-    const fallbackElement = document.createElement('span');
-    fallbackElement.className = 'investment-icon-large';
-    fallbackElement.textContent = emojiMap[investment.area] || '💼';
-    event.target.parentElement.appendChild(fallbackElement);
+  // Método para atualizar cookies no backend
+  updateCookies(): void {
+    this.gameService.updateCookies(this.cookies).subscribe({
+      next: (updatedCookies) => {
+        console.log('Cookies atualizados:', updatedCookies);
+      },
+      error: (error) => {
+        console.error('Erro ao atualizar cookies:', error);
+      }
+    });
   }
+
+  // Métodos para imagens
+isImageUrl(url: string): boolean {
+  return url.startsWith('http') || (url.startsWith('assets/') && !url.includes('emoji'));
+}
+
+handleImageError(event: any, investment: Investment): void {
+  console.error(`Erro ao carregar imagem: ${investment.image}`);
+  const emojiMap: { [key: string]: string } = {
+    'Energia': '⚡',
+    'Transporte': '🚌',
+    'Segurança': '🚓',
+    'Saúde': '🏥',
+    'Meio Ambiente': '🌳'
+  };
+  
+  event.target.style.display = 'none';
+  const fallbackElement = document.createElement('span');
+  fallbackElement.className = 'investment-icon-large';
+  fallbackElement.textContent = emojiMap[investment.area] || '💼';
+  event.target.parentElement.appendChild(fallbackElement);
+}
 
   logout(): void {
     this.authService.logout();
