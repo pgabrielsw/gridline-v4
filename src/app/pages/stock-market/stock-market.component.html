@@ -1,0 +1,109 @@
+<div class="stock-market-container">
+  <div class="stock-market-header">
+    <button class="btn-back" (click)="backToMap.emit()">← Voltar ao Mapa</button>
+    <h2>📈 Bolsa de Valores de Gridline</h2>
+    <div class="current-cookies">🍪 {{ cookies | number: '1.2-2' }} Biscoitos</div>
+  </div>
+
+  <div class="stock-market-content">
+    <!-- Lista de Ativos Disponíveis -->
+    <div class="assets-list-panel">
+      <h3>Ativos do Mercado</h3>
+      <div class="asset-card" 
+           *ngFor="let asset of assets"
+           [class.selected]="selectedAsset?.id === asset.id"
+           (click)="selectAsset(asset)">
+        <div class="asset-header">
+          <span class="asset-emoji">{{ asset.emoji }}</span>
+          <span class="asset-name">{{ asset.name }}</span>
+          <span class="asset-price">{{ asset.price | number: '1.2-2' }}</span>
+        </div>
+        <div class="asset-footer">
+          <span class="asset-change" [class.positive]="asset.change > 0" [class.negative]="asset.change < 0">
+            {{ asset.change | number: '1.2-2' }}
+          </span>
+          <span class="asset-type">{{ asset.type }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detalhes do Ativo Selecionado e Ações -->
+    <div class="asset-details-panel">
+      <div *ngIf="selectedAsset; else noAssetSelected" class="selected-asset-info">
+        <h3>{{ selectedAsset.emoji }} {{ selectedAsset.name }}</h3>
+        <p class="asset-desc">{{ selectedAsset.description }}</p>
+        <div class="asset-stats">
+          <div class="stat-item">
+            <span>Preço Atual:</span> 
+            <span>{{ selectedAsset.price | number: '1.2-2' }}</span>
+          </div>
+          <div class="stat-item">
+            <span>Variação:</span> 
+            <span [class.positive]="selectedAsset.change > 0" [class.negative]="selectedAsset.change < 0">
+              {{ selectedAsset.change | number: '1.2-2' }}
+            </span>
+          </div>
+          <div class="stat-item">
+            <span>Suas Ações:</span> 
+            <span>{{ getPortfolioAssetQuantity(selectedAsset.id) }}</span>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="btn-action buy" [class.active]="actionType === 'buy'" (click)="selectAction('buy')">Comprar</button>
+          <button class="btn-action sell" [class.active]="actionType === 'sell'" (click)="selectAction('sell')">Vender</button>
+        </div>
+
+        <div *ngIf="actionType" class="action-form">
+          <label for="quantity">Quantidade:</label>
+          <input type="number" id="quantity" [(ngModel)]="quantity" min="1" [max]="actionType === 'sell' ? getPortfolioAssetQuantity(selectedAsset.id) : 99999" />
+          
+          <div class="total-cost" *ngIf="actionType === 'buy'">
+            Custo Total: {{ (selectedAsset.price * quantity) | number: '1.2-2' }}
+          </div>
+          <div class="total-revenue" *ngIf="actionType === 'sell'">
+            Receita Total: {{ (selectedAsset.price * quantity) | number: '1.2-2' }}
+          </div>
+
+          <button class="btn-confirm-action" 
+                  [class.buy]="actionType === 'buy'" 
+                  [class.sell]="actionType === 'sell'" 
+                  (click)="actionType === 'buy' ? buy() : sell()" 
+                  [disabled]="quantity <= 0 || (actionType === 'buy' && cookies < (selectedAsset.price * quantity)) || (actionType === 'sell' && getPortfolioAssetQuantity(selectedAsset.id) < quantity)">
+            {{ actionType === 'buy' ? 'Confirmar Compra' : 'Confirmar Venda' }}
+          </button>
+        </div>
+
+      </div>
+      <ng-template #noAssetSelected>
+        <p class="select-asset-message">Selecione um ativo para ver os detalhes e negociar.</p>
+      </ng-template>
+    </div>
+
+    <!-- Portfólio do Jogador -->
+    <div class="portfolio-panel">
+      <h3>📈 Seu Portfólio (Valor Total: {{ getTotalPortfolioValue() | number: '1.2-2' }})</h3>
+      <div *ngIf="assets.length > 0 && Object.keys(portfolio).length > 0; else emptyPortfolio" class="portfolio-list">
+        <div class="portfolio-item" *ngFor="let asset of assets">
+          <ng-container *ngIf="portfolio[asset.id]?.quantity > 0">
+            <div class="item-header">
+              <span class="item-emoji">{{ asset.emoji }}</span>
+              <span class="item-name">{{ asset.name }}</span>
+              <span class="item-quantity">{{ portfolio[asset.id]?.quantity }} ações</span>
+            </div>
+            <div class="item-details">
+              <span>Preço Médio: {{ portfolio[asset.id]?.averagePrice | number: '1.2-2' }}</span>
+              <span>Preço Atual: {{ asset.price | number: '1.2-2' }}</span>
+              <span class="item-profit-loss" [class.positive]="getProfitLoss(asset.id) > 0" [class.negative]="getProfitLoss(asset.id) < 0">
+                Lucro/Prejuízo: {{ getProfitLoss(asset.id) | number: '1.2-2' }}
+              </span>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <ng-template #emptyPortfolio>
+        <p class="empty-message">Você ainda não tem nenhum ativo na sua carteira. Comece a investir!</p>
+      </ng-template>
+    </div>
+  </div>
+</div>

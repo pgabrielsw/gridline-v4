@@ -1,0 +1,437 @@
+==================== app.component.ts ====================
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterOutlet } from '@angular/router';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [CommonModule, RouterOutlet], 
+  template: `
+    <div class="app">
+      <router-outlet></router-outlet>
+    </div>
+  `,
+  styles: [`
+    .app {
+      padding: 0; 
+      margin: 0; 
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      width: 100%;
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+    }
+  `]
+})
+export class AppComponent {
+  title = 'gridline-frontend';
+}
+
+==================== app.ts ====================
+import { Component, signal } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  imports: [],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App {
+  protected readonly title = signal('gridline-v4');
+}
+
+==================== core/services/api.service.ts ====================
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ApiService {
+  private baseUrl = 'http://localhost:8080/api';
+
+  constructor(private http: HttpClient) { }
+
+
+}
+
+==================== core/services/auth.service.ts ====================
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthService {
+  private isAuthenticated = false;
+  private userEmail: string | null = null;
+
+  constructor(private router: Router) {
+    this.checkStoredAuth();
+  }
+
+  private checkStoredAuth(): void {
+    const storedAuth = localStorage.getItem('isLoggedIn');
+    const storedEmail = localStorage.getItem('userEmail');
+
+    if (storedAuth === 'true' && storedEmail) {
+      this.isAuthenticated = true;
+      this.userEmail = storedEmail;
+    }
+  }
+
+  login(email: string, password: string): boolean {
+    // Simulação de autenticação
+    if (email === 'admin@admin.com' && password === '123') {
+      this.isAuthenticated = true;
+      this.userEmail = email;
+      
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userEmail', email);
+      
+      console.log('Login bem-sucedido para:', email);
+      return true;
+    }
+    
+    console.log('Login falhou para:', email);
+    return false;
+  }
+
+  logout(): void {
+    this.isAuthenticated = false;
+    this.userEmail = null;
+    
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('userEmail');
+    
+    console.log('Usuário deslogado');
+  }
+
+  isLoggedIn(): boolean {
+    const storedAuth = localStorage.getItem('isLoggedIn');
+    if (storedAuth === 'true' && !this.isAuthenticated) {
+      this.isAuthenticated = true;
+      this.userEmail = localStorage.getItem('userEmail');
+    }
+    return this.isAuthenticated;
+  }
+
+  // ADICIONE ESTE MÉTODO:
+  getUserEmail(): string | null {
+    return this.userEmail || localStorage.getItem('userEmail');
+  }
+}
+
+==================== core/services/game.service.ts ====================
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class GameService {
+  private http = inject(HttpClient);
+  private baseUrl = 'http://localhost:8080/api';
+
+  // Método temporário - sem autenticação por enquanto
+  saveGame(saveName: string, gameData: any): Observable<any> {
+    console.log('Salvando jogo:', saveName, gameData);
+    
+    // Por enquanto, vamos salvar apenas localmente
+    // Quando o backend tiver autenticação, implemente a chamada real:
+    // return this.http.post(`${this.baseUrl}/game/save`, { saveName, gameData });
+    
+    return of({ 
+      success: true, 
+      message: 'Jogo salvo localmente',
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  // Método temporário - sem autenticação por enquanto
+  updateCookies(cookies: number): Observable<any> {
+    console.log('Atualizando cookies:', cookies);
+    
+    // Por enquanto, vamos apenas simular
+    // Quando o backend tiver autenticação, implemente a chamada real:
+    // return this.http.put(`${this.baseUrl}/user/cookies`, { cookies });
+    
+    return of({ 
+      success: true, 
+      cookies: cookies,
+      updatedAt: new Date().toISOString()
+    });
+  }
+
+  // Método para carregar jogo salvo
+  loadGame(saveName: string): Observable<any> {
+    console.log('Carregando jogo:', saveName);
+    
+    // Por enquanto, retorna dados vazios
+    return of({
+      success: true,
+      gameData: null,
+      message: 'Nenhum jogo salvo encontrado'
+    });
+  }
+
+  // Método para obter estatísticas do jogo
+  getGameStats(): Observable<any> {
+    console.log('Obtendo estatísticas do jogo');
+    
+    // Por enquanto, retorna estatísticas mock
+    return of({
+      totalPlayTime: '2h 30m',
+      totalCookies: 1500,
+      buildingsConstructed: 8,
+      investmentsMade: 12
+    });
+  }
+}
+
+==================== pages/game/game.component.ts ====================
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
+import { GameService } from '../../core/services/game.service';
+
+interface CityPoint {
+  id: number;
+  name: string;
+  type: 'saúde' | 'Segurança' | 'Transporte' | 'Energia' | 'ambiente' | 'government' | 'education' | 'commerce' | 'industry' | 'culture' | 'sports';
+  x: number;
+  y: number;
+  info: string;
+  level: number;
+  description: string;
+  image: string;
+  upgrades: Upgrade[];
+}
+
+interface Upgrade {
+  name: string;
+  cost: number;
+  impact: string;
+  description: string;
+  requiredLevel: number;
+}
+
+interface Investment {
+  area: string;
+  cost: number;
+  impact: string;
+  description: string;
+  image: string;
+  imageType: 'emoji' | 'local' | 'url';
+}
+
+interface CookieSource {
+  name: string;
+  description: string;
+  cookies: number;
+  cooldown: number;
+  lastCollected?: number;
+}
+
+@Component({
+  selector: 'app-game',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './game.component.html',
+  styleUrls: ['./game.component.scss']
+})
+export class GameComponent implements OnInit {
+  userEmail: string | null = null;
+  cookies: number = 1000;
+  selectedPoint: CityPoint | null = null;
+  showInvestmentPopup: boolean = false;
+  selectedInvestment: Investment | null = null;
+  currentView: 'map' | 'location' = 'map';
+  
+  // Indicadores da cidade
+  indicators = {
+    Energia: 65,
+    Transporte: 45,
+    Segurança: 70,
+    ambiente: 60,
+    saúde: 75
+  };
+
+  // Fontes de Cookies
+  cookieSources: CookieSource[] = [
+    {
+      name: '💼 Impostos Urbanos',
+      description: 'Coleta de impostos dos moradores',
+      cookies: 50,
+      cooldown: 30000
+    },
+    {
+      name: '🏭 Produção Industrial',
+      description: 'Vendas de produtos da cidade',
+      cookies: 75,
+      cooldown: 45000
+    },
+    {
+      name: '🎯 Eventos da Cidade',
+      description: 'Festivais e eventos especiais',
+      cookies: 100,
+      cooldown: 60000
+    },
+    {
+      name: '💡 Inovação Tecnológica',
+      description: 'Patentes e descobertas científicas',
+      cookies: 150,
+      cooldown: 90000
+    }
+  ];
+
+  // Pontos inteligentes da cidade organizados por setores
+  cityPoints: CityPoint[] = [
+    // ... (conteúdo completo conforme extraído anteriormente) ...
+  ];
+
+  investments: Investment[] = [
+    // ... (conteúdo completo conforme extraído anteriormente) ...
+  ];
+
+  constructor(
+    private authService: AuthService,
+    private gameService: GameService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    this.userEmail = this.authService.getUserEmail();
+    this.initializeCookieSources();
+  }
+
+  // ... (restante do código do componente conforme extraído anteriormente) ...
+}
+
+==================== pages/login/login.component.ts ====================
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
+
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule
+  ],
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss']
+})
+export class LoginComponent {
+  loginForm: FormGroup;
+  isLoading: boolean = false;
+  errorMessage: string = '';
+
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private authService: AuthService
+  ) {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(3)]]
+    });
+  }
+
+  get email() {
+    return this.loginForm.get('email');
+  }
+
+  get password() {
+    return this.loginForm.get('password');
+  }
+
+  onSubmit() {
+    if (this.loginForm.valid) {
+      this.isLoading = true;
+      this.errorMessage = '';
+
+      const { email, password } = this.loginForm.value;
+      
+      if (this.authService.login(email, password)) {
+        setTimeout(() => {
+          this.isLoading = false;
+          this.router.navigate(['/game']);
+        }, 1000);
+      } else {
+        setTimeout(() => {
+          this.isLoading = false;
+          this.errorMessage = 'Credenciais inválidas. Use: admin@admin.com / 123';
+        }, 1000);
+      }
+    } else {
+      this.loginForm.markAllAsTouched();
+    }
+  }
+}
+
+==================== services/api.service.ts ====================
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, catchError, throwError } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ApiService {
+  private http = inject(HttpClient);
+  private baseUrl = 'http://localhost:8080/api';
+
+}
+
+==================== services/game.service.ts ====================
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class GameService {
+  private baseUrl = 'http://localhost:8080/api';
+
+  constructor(private http: HttpClient) { }
+
+  saveGame(saveName: string, gameData: any): Observable<any> {
+    
+    console.log('Salvando jogo:', saveName, gameData);
+    return of({ success: true, message: 'Jogo salvo localmente' });
+  }
+
+  updateCookies(cookies: number): Observable<any> {
+    
+    console.log('Atualizando cookies:', cookies);
+    return of({ success: true, cookies: cookies });
+  }
+}
+
+==================== backend/src/main/java/com/gridline/GridlineApplication.java ====================
+package com.gridline;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class GridlineApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(GridlineApplication.class, args);
+    }
+}

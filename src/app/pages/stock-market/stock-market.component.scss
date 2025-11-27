@@ -1,0 +1,352 @@
+// src/app/pages/stock-market/stock-market.component.scss
+$primary-blue: #00b4d8;
+$secondary-blue: #0077b6;
+$dark-blue: #1e3c72;
+$darker-blue: #2a5298;
+$success-green: #28a745;
+$warning-yellow: #ffc107;
+$danger-red: #dc3545;
+$gray-light: #f8f9fa;
+$gray-medium: #6c757d;
+$gray-dark: #343a40;
+$text-color: #e0e0e0;
+$border-color: rgba(255, 255, 255, 0.2);
+
+@mixin pixel-border {
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0 #000;
+}
+
+@mixin button-style($bg-color) {
+  background: $bg-color;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  cursor: pointer;
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0 #000;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 #000;
+    filter: brightness(1.1);
+  }
+
+  &:disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.stock-market-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Courier New', monospace;
+  color: $text-color;
+  background: linear-gradient(135deg, $dark-blue 0%, $darker-blue 100%);
+  border-radius: 8px;
+  @include pixel-border;
+}
+
+.stock-market-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid $primary-blue;
+
+  h2 {
+    margin: 0;
+    color: $primary-blue;
+    text-shadow: 2px 2px 0 #000;
+    font-size: 1.8rem;
+  }
+
+  .btn-back {
+    @include button-style($gray-medium);
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+
+    &:hover {
+      background: darken($gray-medium, 10%);
+    }
+  }
+
+  .current-cookies {
+    background: rgba($warning-yellow, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    border: 1px solid $warning-yellow;
+    font-weight: bold;
+    color: $warning-yellow;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+  }
+}
+
+.btn-stock-market { // Estilo para o botão que abre a bolsa
+  @include button-style($primary-blue);
+  margin-left: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+.stock-market-content {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1fr;
+  gap: 2rem;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.assets-list-panel {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.asset-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0.8rem;
+  margin-bottom: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,255,255,0.2);
+  }
+
+  &.selected {
+    border-color: $primary-blue;
+    box-shadow: 0 0 10px rgba($primary-blue, 0.5);
+    background: rgba($primary-blue, 0.2);
+  }
+
+  .asset-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+  }
+
+  .asset-emoji {
+    font-size: 1.2rem;
+    margin-right: 0.5rem;
+  }
+
+  .asset-name {
+    flex-grow: 1;
+    color: $text-color;
+  }
+
+  .asset-price {
+    color: $accent-cyan;
+    font-size: 1.1rem;
+  }
+
+  .asset-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: $gray-medium;
+  }
+
+  .asset-change {
+    &.positive { color: $success-green; }
+    &.negative { color: $danger-red; }
+  }
+}
+
+.selected-asset-info {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid $primary-blue;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-top: 1rem;
+  text-align: center;
+  flex-grow: 1;
+
+  h3 {
+    color: $primary-blue;
+    margin-bottom: 0.5rem;
+    font-size: 1.4rem;
+  }
+
+  .asset-desc {
+    font-size: 0.9rem;
+    color: $gray-medium;
+    margin-bottom: 1rem;
+  }
+
+  .asset-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px dashed $border-color;
+
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+
+      span:first-child {
+        color: $gray-light;
+      }
+      span:last-child {
+        font-weight: bold;
+      }
+      .positive { color: $success-green; }
+      .negative { color: $danger-red; }
+    }
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+
+  .btn-action {
+    flex: 1;
+    @include button-style($dark-blue);
+    border-color: $primary-blue;
+    background: rgba($primary-blue, 0.3);
+    color: $primary-blue;
+
+    &.buy.active, &.sell.active {
+      background: $primary-blue;
+      color: white;
+      box-shadow: 0 0 15px rgba($primary-blue, 0.5);
+    }
+
+    &:hover {
+      background: rgba($primary-blue, 0.5);
+    }
+  }
+}
+
+.action-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1rem;
+
+  label {
+    font-size: 0.9rem;
+    color: $gray-light;
+  }
+
+  input[type="number"] {
+    width: 100%;
+    padding: 0.6rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid $border-color;
+    border-radius: 4px;
+    color: white;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    outline: none;
+
+    &:focus {
+      border-color: $accent-cyan;
+    }
+  }
+
+  .total-cost, .total-revenue {
+    text-align: right;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: $accent-cyan;
+  }
+
+  .btn-confirm-action {
+    @include button-style($primary-blue);
+    &.sell { background: $danger-red; border-color: $danger-red;}
+    &.buy { background: $success-green; border-color: $success-green;}
+
+    &:hover {
+      filter: brightness(1.2);
+    }
+  }
+}
+
+.portfolio-panel {
+  .portfolio-list {
+    max-height: 500px;
+    overflow-y: auto;
+  }
+
+  .portfolio-item {
+    display: flex;
+    flex-direction: column;
+    padding: 0.8rem;
+    margin-bottom: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid $border-color;
+    border-radius: 4px;
+
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      margin-bottom: 0.3rem;
+    }
+
+    .item-emoji {
+      font-size: 1.2rem;
+      margin-right: 0.5rem;
+    }
+
+    .item-name {
+      flex-grow: 1;
+      color: $text-color;
+    }
+
+    .item-quantity {
+      color: $primary-blue;
+    }
+
+    .item-details {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: $gray-medium;
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px dashed rgba(255, 255, 255, 0.1);
+
+      .item-profit-loss {
+        &.positive { color: $success-green; }
+        &.negative { color: $danger-red; }
+      }
+    }
+  }
+}
+
+.empty-message, .select-asset-message {
+  text-align: center;
+  color: $gray-medium;
+  font-style: italic;
+  margin-top: 2rem;
+}
